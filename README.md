@@ -47,5 +47,15 @@ exports.createClient(function(req, res) {
   req.end('because there is no I in example.\n');
 });
 
-server.listen(function() {});
+server.listen();
+```
+
+The output from the above code
+```
+SERVER header { hello: 'alice', this: 'is bob' }
+SERVER message "this is body chunks.  and it will stream and stream\nbecause there is no I in example.\n"
+SERVER end
+CLIENT header { well: 'that was fun' }
+CLIENT message "ok, goodbye, now"
+CLIENT end
 ```
