@@ -1,0 +1,22 @@
+{
+  "name": "restream",
+  "version": "1.0.0",
+  "description": "simple-protocol with reconnect robustness",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:hij1nx/restream.git"
+  },
+  "keywords": [
+    "simple-protocol",
+    "streams2",
+    "reconnect",
+    "tcp",
+    "hotdogs"
+  ],
+  "author": "hij1nx",
+  "license": "MIT"
+}
