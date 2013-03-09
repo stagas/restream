@@ -51,6 +51,7 @@ restream.createClient(function(req, res) {
   req.write('.  and it will stream and stream\n');
   req.end('because there is no I in example.\n');
 });
+```
 
 ## Start listening in any order
 ```js
@@ -72,7 +73,7 @@ CLIENT end
 ## createServer([options], [callback])
 
 ### `{ timeout: <Number> }`
-An optiona; number to determine how long before attempting the next reconnection. 
+An optional number to determine how long before attempting the next reconnection. 
 Defaults to `3e4`. Note that this number is multiplied by the number of failures
 to connect.
 
