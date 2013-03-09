@@ -72,13 +72,30 @@ CLIENT end
 
 ## createServer([options], [callback])
 
-### `{ timeout: <Number> }`
+### [options] `{ port: <Number> }`
+The port on which the client should expect to find the tcp server.
+
+### [callback] `function(req, res)`
+A callback that is called once a connection is established. The callback yields
+request and response streams that are readable and writable.
+
+## createClient([options], [callback])
+
+### [options] `{ timeout: <Number> }`
 An optional number to determine how long before attempting the next reconnection. 
 Defaults to `3e4`. Note that this number is multiplied by the number of failures
 to connect.
 
-### `{ resetTimeout: <Number> }`
+### [options] `{ resetTimeout: <Number> }`
 Since the timeout is multiplied by the number of failures to connect, this 
 option provides a limit for how long the wait can become. The value represents
 the number of failures before a reset should happen.
 
+### [options] `{ servers: <Object> }`
+An array that contains a list of servers. Each object in the array should 
+contain a `port` and `host` address. When a connection can't be made to a 
+server, the next server in the array is selected for the reconnect attempt.
+
+### [callback] `function(req, res)`
+A callback that is called once a connection is established. The callback yields
+request and response streams that are readable and writable.

@@ -46,7 +46,7 @@ exports.createClient = function(opts, callback) {
 
   if (typeof opts === 'function') {
     callback = opts;
-    opts = { port: 9967 };
+    opts = {};
   }
 
   opts.servers = opts.servers || [{ port: 9967, host: '127.0.0.1' }];
