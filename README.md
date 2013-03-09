@@ -3,10 +3,11 @@
 restream(3)
 
 # SYNOPSIS
-simple-protocol with reconnect robustness
+simple-protocol over tcp with reconnect robustness
 
 # EXAMPLES
 
+## Create a Server
 ```js
 var restream = require('restream');
 var server = restream.createServer(function(req, res) {
@@ -26,7 +27,10 @@ var server = restream.createServer(function(req, res) {
     res.end('goodbye, now');
   });
 });
+```
 
+## Create a Client
+```js
 restream.createClient(function(req, res) {
 
   req.header = { hello: 'alice', this: 'is bob' };
@@ -48,6 +52,8 @@ restream.createClient(function(req, res) {
   req.end('because there is no I in example.\n');
 });
 
+## Start listening in any order
+```js
 server.listen();
 ```
 
@@ -60,3 +66,18 @@ CLIENT header { well: 'that was fun' }
 CLIENT message "ok, goodbye, now"
 CLIENT end
 ```
+
+# API
+
+## createServer([options], [callback])
+
+### `{ timeout: <Number> }`
+An optiona; number to determine how long before attempting the next reconnection. 
+Defaults to `3e4`. Note that this number is multiplied by the number of failures
+to connect.
+
+### `{ resetTimeout: <Number> }`
+Since the timeout is multiplied by the number of failures to connect, this 
+option provides a limit for how long the wait can become. The value represents
+the number of failures before a reset should happen.
+
