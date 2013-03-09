@@ -1,6 +1,6 @@
 {
   "name": "restream",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "simple-protocol with reconnect robustness",
   "main": "index.js",
   "scripts": {
