@@ -8,7 +8,8 @@ simple-protocol with reconnect robustness
 # EXAMPLES
 
 ```js
-var server = exports.createServer(function(req, res) {
+var restream = require('restream');
+var server = restream.createServer(function(req, res) {
 
   req.on('header', function(h) {
     console.log('SERVER header', h);
@@ -26,7 +27,7 @@ var server = exports.createServer(function(req, res) {
   });
 });
 
-exports.createClient(function(req, res) {
+restream.createClient(function(req, res) {
 
   req.header = { hello: 'alice', this: 'is bob' };
 
