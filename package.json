@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "simple-protocol": "1.0.0",
+    "simple-protocol": "1.1.0",
     "readable-stream": "1.0.0"
   },
   "repository": {
