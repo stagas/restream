@@ -2,7 +2,7 @@
 //
 // Attempt to send logs before the server is listening.
 //
-var restream = require('restream');
+var restream = require('../');
 
 var server = restream.createServer(function(req, res) {
 
@@ -22,7 +22,7 @@ var server = restream.createServer(function(req, res) {
   });
 });
 
-restream.createClient(function(req, res) {
+restream.createClient([{ port: 9967, host: '127.0.0.1' }], function(req, res) {
 
   req.header = { hello: 'alice', this: 'is bob' };
 
@@ -36,6 +36,7 @@ restream.createClient(function(req, res) {
 
   res.on('end', function() {
     console.log('CLIENT end');
+    server.close();
   });
 
   req.write('this is body chunks');
@@ -44,5 +45,11 @@ restream.createClient(function(req, res) {
 });
 
 setTimeout(function() {
-  server.listen();
+  server.listen(9967);
+  server.on('listening', function() {
+    console.log('SERVER listening');
+  });
+  server.on('connection', function() {
+    console.log('SERVER connected client');
+  });
 }, 100)
