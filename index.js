@@ -104,14 +104,14 @@ exports.createClient = function(servers, opts, onconnect) {
   var serverIndex = 0;
   var reconnectTries = 0;
   var reconnectTime = opts.timeout || 3e4;
-  var resetTimeout = opts.resetTimeout || 10;
+  var maxReconnects = opts.maxReconnects || 10;
   var reconnectTimeout;
 
   var socket = new net.Socket;
 
   function connect() {
 
-    if (reconnectTries >= resetTimeout) {
+    if (reconnectTries >= maxReconnects) {
 
       var err = new Error('Max number of reconnects reached');
       return socket.emit('error', err);
