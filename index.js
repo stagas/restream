@@ -1,3 +1,8 @@
+
+/**
+ * Module dependencies.
+ */
+
 var rs = require('readable-stream');
 var net = require('net');
 
