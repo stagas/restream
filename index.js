@@ -1,55 +1,105 @@
 var rs = require('readable-stream');
-var sp = require('simple-protocol');
 var net = require('net');
 
-var Incoming = sp.Incoming;
-var Outgoing = sp.Outgoing;
+/**
+ * Holds protocol.
+ */
 
-exports.createServer = function(opts, callback) {
+var _protocol;
+
+/**
+ * Set protocol to fallback to.
+ *
+ * @param {Object} obj
+ */
+
+exports.setProtocol = function(obj) {
+  _protocol = obj;
+};
+
+/**
+ * Create a server.
+ *
+ * Options:
+ *
+ * - {Object} protocol Protocol to use
+ * - {Number} timeout Reconnect timeout
+ * - {Number} maxReconnects Maximum number of reconnects to try
+ *
+ * @param {Object} [opts]
+ * @param {Function} onconnection
+ * @return {Server}
+ * @api public
+ */
+
+exports.createServer = function(opts, onconnection) {
+
+  // .createServer(fn)
 
   if (typeof opts === 'function') {
-    callback = opts;
+    onconnection = opts;
     opts = {};
   }
 
+  // fallback to simple-protocol
+  var protocol = opts.protocol || _protocol || require('simple-protocol');
+
   var server = net.createServer({ allowHalfOpen: true }, function(socket) {
 
-    var req = new Incoming();
-    var res = new Outgoing();
+    var req = new protocol.Incoming();
+    var res = new protocol.Outgoing();
     res.pipe(socket).pipe(req);
 
-    callback(req, res);
-
-    this.close();
+    onconnection(req, res);
   });
-
-  server._listen = server.listen;
-
-  server.listen = function(port, callback) {
-    if (typeof port === 'function') {
-      callback = port;
-      port = opts.port || 9967;
-    }
-
-    if (callback) {
-      server._listen(port, callback);
-    }
-    else {
-      server._listen(port);
-    }
-  }
 
   return server;
 };
 
-exports.createClient = function(opts, callback) {
+/**
+ * Create a client.
+ *
+ * It will attempt to connect to one of
+ * the `servers` using options object `opts`.
+ *
+ * You can pass an `onconnect` listener
+ * as a shortcut to `.on('connect', onconnect)`.
+ *
+ * Options:
+ *
+ * - {Object} protocol Protocol to use
+ * - {Number} timeout Reconnect timeout
+ * - {Number} maxReconnects Maximum number of reconnects to try
+ *
+ * @param {Array} servers
+ * @param {Object} [opts]
+ * @param {Function} [onconnect]
+ * @return {Socket}
+ * @api public
+ */
+
+exports.createClient = function(servers, opts, onconnect) {
+
+  // .createClient({ servers: [...] }, fn)
+
+  if (!Array.isArray(servers)) {
+    onconnect = opts;
+    opts = servers;
+    servers = opts.servers;
+    if (!servers || !servers.length) {
+      throw new Error('No servers to connect to!')
+    }
+  }
+
+  // .createClient(servers, fn)
 
   if (typeof opts === 'function') {
-    callback = opts;
+    onconnect = opts;
     opts = {};
   }
 
-  opts.servers = opts.servers || [{ port: 9967, host: '127.0.0.1' }];
+  // fallback to simple-protocol
+  var protocol = opts.protocol || _protocol || require('simple-protocol');
 
   var serverIndex = 0;
   var reconnectTries = 0;
@@ -67,11 +117,11 @@ exports.createClient = function(opts, callback) {
       return socket.emit('error', err);
     }
 
-    if (serverIndex >= opts.servers.length) {
+    if (serverIndex >= servers.length) {
       serverIndex = 0;
     }
 
-    var service = opts.servers[serverIndex];
+    var service = servers[serverIndex];
 
     socket.connect(service.port, service.host);
     socket.allowHalfOpen = true;
@@ -93,12 +143,12 @@ exports.createClient = function(opts, callback) {
   });
 
   socket.on('connect', function() {
-    var req = new Outgoing();
-    var res = new Incoming();
+    var req = new protocol.Outgoing();
+    var res = new protocol.Incoming();
     req.pipe(socket).pipe(res);
 
-    if (callback) {
-      callback(req, res);
+    if (onconnect) {
+      onconnect(req, res);
     }
   });
 
